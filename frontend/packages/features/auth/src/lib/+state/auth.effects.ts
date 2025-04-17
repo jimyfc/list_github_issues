@@ -1,23 +1,72 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { catchError, delay, map, mergeMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
 import * as AuthActions from './auth.actions';
+import { AuthService } from '../services/auth.service';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 @Injectable()
 export class AuthEffects {
+  private actions$ = inject(Actions);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.login),
-      mergeMap(({ username }) =>
-        of(username).pipe( // Simula petición
-          delay(1000),
-          map(() => AuthActions.loginSuccess({ user: username })),
-          catchError(() => of(AuthActions.loginFailure({ error: 'Login failed' })))
+      switchMap(({ identifier, password }) =>
+        this.authService.login(identifier, password).pipe(
+          map((response) =>
+            AuthActions.loginSuccess({
+              jwt: response.jwt,
+              user: response.user,
+            })
+          ),
+          catchError((error) => {
+            console.error('Login failed', error);
+            return of(AuthActions.loginFailure({ error: error.message }));
+          })
         )
       )
     )
   );
 
-  constructor(private actions$: Actions) {}
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        map(() => {
+          this.router.navigate(['/issues']);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  initializeAuth$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.initializeAuth),
+        map(() => {
+          const token = this.authService.getToken();
+          if (token) {
+            return AuthActions.initializeAuthSuccess({ jwt: token });
+          }
+          return AuthActions.loginFailure({ error: 'No token' });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        map(() => {
+          this.authService.logout();
+          this.router.navigate(['/auth']);
+        })
+      ),
+    { dispatch: false }
+  );
 }

@@ -1,3 +1,6 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 export interface Issue {
   id: number;
   title: string;
@@ -21,10 +24,12 @@ export interface Issue {
   }[];
 }
 
-export interface IssuesState {
-  issues: Issue[];
-  page: number;
-  hasNextPage: boolean;
-  loading: boolean;
-  error: string | null;
+@Component({
+  selector: 'shared-issue-card',
+  standalone: true,
+  templateUrl: './issue.component.html',
+  imports: [CommonModule],
+})
+export class IssueCardComponent {
+  @Input() issue!: Issue;
 }

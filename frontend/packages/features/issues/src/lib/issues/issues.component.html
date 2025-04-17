@@ -1,1 +1,34 @@
-<p>Issues works!</p>
+<shared-layout>
+  <div class="w-100 mx-3 mt-5">
+    <div class="row justify-between">
+      <div class="col-6">
+        <h2>Issues de GitHub</h2>
+      </div>
+      <div class="col-6 justify-content-end d-flex">
+        <button class="btn btn-outline-secondary" (click)="logout()">
+          <i class="bi bi-person-plus"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+    <shared-input type="text" [(ngModel)]="repoUrl" placeholder="https://github.com/usuario/repositorio" />
+    <button type="button" class="btn btn-primary mt-3 float-end" (click)="loadIssues(1)">Cargar issues</button>
+
+    <div *ngIf="loading$ | async">Cargando...</div>
+    <div *ngIf="error$ | async as error" class="alert alert-danger">Error: {{ error }}</div>
+
+    <div class="mt-5 pt-4" *ngIf="issues$ | async as issues">
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let issue of issues">
+          <shared-issue-card [issue]="issue" />
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="row mt-5" *ngIf="(issues$ | async)?.length">
+    <ng-container *ngIf="(page$ | async) as page">
+      <app-pagination [hasNextPage]="(hasNextPage$ | async) ?? false" [currentPage]="page"
+        (pageChange)="onChangePage($event)" />
+    </ng-container>
+  </div>
+</shared-layout>

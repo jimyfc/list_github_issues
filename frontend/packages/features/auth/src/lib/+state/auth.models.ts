@@ -1,5 +1,6 @@
 export interface AuthState {
-  user: string | null;
+  jwt: string | null;
+  user: any | null;
   loading: boolean;
   error: string | null;
 }

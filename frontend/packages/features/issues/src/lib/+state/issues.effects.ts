@@ -1,29 +1,48 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import * as IssuesActions from './issues.actions';
-import { catchError, map, mergeMap } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Issue } from './issues.models';
+import { Store } from '@ngrx/store';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
-@Injectable()
+import {
+  loadIssues,
+  loadIssuesSuccess,
+  loadIssuesFailure,
+} from './issues.actions';
+import { parseLinkHeader } from '../utils/pagination.util';
+
+@Injectable({ providedIn: 'root' })
 export class IssuesEffects {
+  actions$: Actions = inject(Actions);
+  http: HttpClient = inject(HttpClient);
+  store: Store = inject(Store);
+
   loadIssues$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(IssuesActions.loadIssues),
-      mergeMap(({ repoUrl }) => {
-        const [owner, repo] = repoUrl.replace('https://github.com/', '').split('/');
-        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues`;
+      ofType(loadIssues),
+      tap(() => console.log('loadIssues effect triggered')),
+      switchMap(({ repoUrl, page = 1 }) => {
+        const [owner, repo] = repoUrl
+          .replace('https://github.com/', '')
+          .split('/');
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/issues?page=${page}&per_page=15`;
 
-        return this.http.get<Issue[]>(apiUrl).pipe(
-          map((issues) => IssuesActions.loadIssuesSuccess({ issues })),
-          catchError((err) =>
-            of(IssuesActions.loadIssuesFailure({ error: err.message }))
-          )
+        return this.http.get<any[]>(apiUrl, { observe: 'response' }).pipe(
+          map((response) => {
+            const linkHeader = response.headers.get('Link') || '';
+            const hasNextPage = parseLinkHeader(linkHeader);
+            console.log('hasNextPage', hasNextPage);
+
+            return loadIssuesSuccess({
+              issues: response.body || [],
+              page: page,
+              hasNextPage: hasNextPage,
+            });
+          }),
+          catchError((error) => of(loadIssuesFailure({ error: error.message })))
         );
       })
     )
   );
-
-  constructor(private actions$: Actions, private http: HttpClient) {}
 }

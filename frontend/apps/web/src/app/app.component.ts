@@ -1,13 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { Store } from '@ngrx/store';
+
+import * as AuthActions from '@github-issues/auth';
 
 @Component({
-  imports: [NxWelcomeComponent, RouterModule],
   selector: 'app-root',
+  standalone: true,
+  imports: [RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'web';
+  private store = inject(Store);
+  title = 'GitHub Issues Tracker';
+
+  ngOnInit() {
+    this.store.dispatch(AuthActions.initializeAuth());
+  }
 }

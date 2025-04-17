@@ -1,1 +1,25 @@
-<p>Auth works!</p>
+<shared-layout>
+  <div class="mt-5 pt-5">
+    <div class="card p-4 shadow-lg card-login">
+      <h3 class="text-center mb-4">Iniciar Sesión</h3>
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <shared-input type="text" name="username" label="Usuario" [(ngModel)]="username" [required]="true"
+            placeholder="Ingrese su usuario" [disabled]="false"></shared-input>
+        </div>
+        <div class="mb-3">
+          <shared-input type="password" name="password" label="Contraseña" [(ngModel)]="password" [required]="true"
+            placeholder="Ingrese su contraseña" [disabled]="false"></shared-input>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary" [disabled]="!username || !password">
+            Iniciar sesión
+          </button>
+        </div>
+        <div *ngIf="error" class="alert alert-danger mt-3" role="alert">
+          {{ error }}
+        </div>
+      </form>
+    </div>
+  </div>
+</shared-layout>

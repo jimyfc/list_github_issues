@@ -1,0 +1,13 @@
+<label [for]="name" class="form-label">{{ label }}</label>
+<input
+  [type]="type"
+  [id]="name"
+  class="form-control"
+  [(ngModel)]="model"
+  [name]="name"
+  [required]="required"
+  [placeholder]="placeholder"
+  [disabled]="disabled"
+  (input)="onInput($event)"
+  (blur)="onTouched()"
+/>

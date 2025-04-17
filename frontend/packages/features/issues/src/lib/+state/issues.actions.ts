@@ -1,16 +1,13 @@
 import { createAction, props } from '@ngrx/store';
-import { Issue } from './issues.models';
 
 export const loadIssues = createAction(
   '[Issues] Load Issues',
-  props<{ repoUrl: string }>()
+  props<{ repoUrl: string; page?: number }>()
 );
-
 export const loadIssuesSuccess = createAction(
   '[Issues] Load Issues Success',
-  props<{ issues: Issue[] }>()
+  props<{ issues: any[]; page: number; hasNextPage: boolean }>()
 );
-
 export const loadIssuesFailure = createAction(
   '[Issues] Load Issues Failure',
   props<{ error: string }>()

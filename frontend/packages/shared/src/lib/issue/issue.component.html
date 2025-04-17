@@ -1,0 +1,17 @@
+<div class="card shadow-sm h-100">
+  <div class="card-body d-flex flex-column justify-content-between">
+    <h5 class="card-title">
+      <a [href]="issue.html_url" target="_blank" class="text-decoration-none">
+        {{ issue.title }}
+      </a>
+    </h5>
+    <p class="card-text text-muted mb-2">
+      #{{ issue.number }} abierto por <strong>{{ issue.user.login }}</strong>
+    </p>
+    <div class="mt-auto">
+      <span class="badge bg-secondary me-1" *ngFor="let label of issue.labels">
+        {{ label.name }}
+      </span>
+    </div>
+  </div>
+</div>

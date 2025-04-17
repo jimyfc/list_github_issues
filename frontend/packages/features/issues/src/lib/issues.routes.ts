@@ -1,18 +1,12 @@
 import { Routes } from '@angular/router';
-import { provideState,  } from '@ngrx/store';
-import { provideEffects } from '@ngrx/effects';
 
-import { issuesReducer } from './+state/issues.reducer';
-import { IssuesEffects } from './+state/issues.effects';
+import { authGuard } from '@github-issues/auth';
+import { IssuesComponent } from './issues/issues.component';
 
 export const ISSUES_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./issues/issues.component').then((m) => m.IssuesComponent),
-    providers: [
-      provideState('issues', issuesReducer),
-      provideEffects(IssuesEffects),
-    ],
+    canActivate: [authGuard],
+    component: IssuesComponent,
   },
 ];

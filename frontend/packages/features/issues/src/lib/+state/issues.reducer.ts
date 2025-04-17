@@ -1,26 +1,35 @@
 import { createReducer, on } from '@ngrx/store';
-import * as IssuesActions from './issues.actions';
+
+import {
+  loadIssues,
+  loadIssuesSuccess,
+  loadIssuesFailure,
+} from './issues.actions';
 import { IssuesState } from './issues.models';
 
 export const initialState: IssuesState = {
   issues: [],
+  page: 1,
+  hasNextPage: false,
   loading: false,
   error: null,
 };
 
 export const issuesReducer = createReducer(
   initialState,
-  on(IssuesActions.loadIssues, (state) => ({
+  on(loadIssues, (state) => ({
     ...state,
     loading: true,
     error: null,
   })),
-  on(IssuesActions.loadIssuesSuccess, (state, { issues }) => ({
+  on(loadIssuesSuccess, (state, { issues, page, hasNextPage }) => ({
     ...state,
     loading: false,
     issues,
+    page: page ?? 1,
+    hasNextPage,
   })),
-  on(IssuesActions.loadIssuesFailure, (state, { error }) => ({
+  on(loadIssuesFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,

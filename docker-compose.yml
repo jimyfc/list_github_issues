@@ -1,22 +1,22 @@
 services:
 
-  # backend-issues:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "1337:1337"
-  #     - "5173:5173" 
-  #   volumes:
-  #     - ./backend:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   depends_on:
-  #     - db-issues
-  #   environment:
-  #     STRAPI_TELEMETRY_DISABLED: "true"
-  #   env_file: backend/.env
-  #   networks:
-  #     - issues_network
+  backend-issues:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "1337:1337"
+      - "5173:5173" 
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db-issues
+    environment:
+      STRAPI_TELEMETRY_DISABLED: "true"
+    env_file: backend/.env
+    networks:
+      - issues_network
 
   frontend-issues:
     build:
