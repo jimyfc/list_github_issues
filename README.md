@@ -51,6 +51,16 @@ docker-compose -f docker-compose.yml up
 
 4. Acceder a la URL: [http://localhost:4200/](http://localhost:4200/) 
 
+5. Ejecución de tests
+```bash
+  npx nx test auth
+  npx nx test auth
+  npx nx test issues
+  npx nx test util
+  npx nx test issues
+  npx nx test shared
+```
+
 # Notas
 - En ocaciones se debe de repetir el paso 3 un par de veces porque el frontend no arranca, he tenido varios problemas por el tema de que mi procesador es M2 
 - Cuando se registra al usuario admin en Stripe hay problemas de conexión con su API de Analytics y no deja completar el último paso cuando se debe de seleccionar el rol. Ir a la URL Principal e iniciar sesión con normalidad
